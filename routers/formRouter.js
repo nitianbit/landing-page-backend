@@ -10,7 +10,7 @@ import {
 
 router.get("/getForm", getForm);
 router.post("/addForm", addForm);
-router.get('/getForm/:id', getFormById);
-router.put('/editForm/:id', editForm);
+router.get('/Forms/:id', getFormById);
+router.put('/Forms/:id', editForm);
 
 export default router;
