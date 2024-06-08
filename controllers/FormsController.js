@@ -1,8 +1,8 @@
 import Forms from '../models/FormModal.js'
 
 export const addForm = async (req, res) => {
-    const { title, fields } = req.body;
-    const form = new Forms({ title, fields });
+    const { title, fields, project } = req.body;
+    const form = new Forms({ title, fields, project });
     try {
         await form.save();
         res.status(201).send(form);
@@ -19,6 +19,19 @@ export const getForm = async (req, res) => {
         res.status(500).send(error);
     }
 }
+
+
+export const getFormProject = async (req, res) => {
+    try {
+        const forms = await Form.find({ project: req.params.projectId }).populate('fields');
+        res.status(200).send(forms);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
+
+
+
 
 export const getFormById = async (req, res) => {
     const { id } = req.params;

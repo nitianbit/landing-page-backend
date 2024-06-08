@@ -10,6 +10,8 @@ import mongoose from "mongoose";
 
 import fieldRouter from './routers/fieldRouter.js'
 import formRouter from './routers/formRouter.js'
+import formValueRouter from './routers/fieldValueRouter.js'
+import projectRouter from './routers/projectRouter.js'
 
 
 app.use(express.json());
@@ -22,6 +24,8 @@ app.get("/api/", (req, res) => {
 
 app.use("/api", fieldRouter);
 app.use("/api", formRouter);
+app.use('/api', formValueRouter)
+app.use('/api', projectRouter)
 
 app.use("*", (req, res) => {
   res.status(404).json({ msg: "not found" });

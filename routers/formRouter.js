@@ -5,12 +5,14 @@ import {
     addForm,
     getForm,
     editForm,
-    getFormById
+    getFormById,
+    getFormProject
 } from "../controllers/FormsController.js";
 
 router.get("/getForm", getForm);
 router.post("/addForm", addForm);
 router.get('/Forms/:id', getFormById);
+router.get('/projects/:projectId/Forms', getFormProject);
 router.put('/Forms/:id', editForm);
 
 export default router;

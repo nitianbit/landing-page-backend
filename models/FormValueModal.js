@@ -1,6 +1,6 @@
 // models/FormValue.js
 
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const formValueSchema = new mongoose.Schema({
     formId: { type: mongoose.Schema.Types.ObjectId, ref: 'Form', required: true },
@@ -13,4 +13,5 @@ const formValueSchema = new mongoose.Schema({
     submittedAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('FormValue', formValueSchema);
+const FormValue = mongoose.model('FormValue', formValueSchema);
+export default FormValue

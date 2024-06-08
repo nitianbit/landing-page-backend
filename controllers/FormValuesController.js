@@ -1,12 +1,10 @@
 // routes/formValueRoutes.js
 
-const express = require('express');
-const router = express.Router();
-const FormValue = require('../models/FormValueModal.js');
-const Form = require('../models/FormModal.js');
+import FormValue from '../models/FormValueModal.js'
+import Form from '../models/FormModal.js'
 
 // Create form values
-router.post('/', async (req, res) => {
+export const createFormValues = async (req, res) => {
     try {
         const { formId, values } = req.body;
 
@@ -22,21 +20,21 @@ router.post('/', async (req, res) => {
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
-});
+}
 
 // Get all form values
-router.get('/', async (req, res) => {
+export const getAllFormValue = async (req, res) => {
     try {
         const formValues = await FormValue.find().populate('formId').populate('values.fieldId');
         res.json(formValues);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
+}
 
 
 // Update form values
-router.put('/:formValueId', async (req, res) => {
+export const updateFormValue = async (req, res) => {
     try {
         const { values } = req.body;
 
@@ -46,11 +44,11 @@ router.put('/:formValueId', async (req, res) => {
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
-});
+}
 
 
 // Get form values by ID
-router.get('/:formValueId', async (req, res) => {
+export const getFormValueId = async (req, res) => {
     try {
         const formValue = await FormValue.findById(req.params.formValueId).populate('formId').populate('values.fieldId');
         if (!formValue) {
@@ -60,16 +58,15 @@ router.get('/:formValueId', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
+}
 
 // Delete form values
-router.delete('/:formValueId', async (req, res) => {
+export const deleteFormValue = async (req, res) => {
     try {
         await FormValue.findByIdAndDelete(req.params.formValueId);
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
+}
 
-module.exports = router;
