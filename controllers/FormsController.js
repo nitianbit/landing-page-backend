@@ -1,15 +1,20 @@
 import Forms from '../models/FormModal.js'
-
+import mongoose from 'mongoose';
 export const addForm = async (req, res) => {
     const { title, fields, project } = req.body;
-    const form = new Forms({ title, fields, project });
+
+    // Map fields to an array of ObjectIds
+    const formattedFields = fields.map(field => new mongoose.Types.ObjectId(field.fieldId));
+
+    const form = new Forms({ title, fields: formattedFields, project: new mongoose.Types.ObjectId(project) });
+
     try {
         await form.save();
         res.status(201).send(form);
     } catch (error) {
         res.status(400).send(error);
     }
-}
+};
 
 export const getForm = async (req, res) => {
     try {
@@ -23,7 +28,7 @@ export const getForm = async (req, res) => {
 
 export const getFormProject = async (req, res) => {
     try {
-        const forms = await Form.find({ project: req.params.projectId }).populate('fields');
+        const forms = await Forms.find({ project: req.params.projectId }).populate('fields');
         res.status(200).send(forms);
     } catch (error) {
         res.status(500).send(error);
