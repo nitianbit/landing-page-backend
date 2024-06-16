@@ -9,7 +9,7 @@ import {
     updateFormValue
 } from "../controllers/FormValuesController.js";
 
-router.get("/getFormValue", getAllFormValue);
+router.get("/getFormValues", getAllFormValue);
 router.post("/addFormValue", createFormValues);
 router.get('/formsValue/:id', getFormValueId);
 router.delete('/deleteFormValue', deleteFormValue);

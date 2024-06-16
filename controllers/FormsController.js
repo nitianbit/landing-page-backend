@@ -4,7 +4,7 @@ export const addForm = async (req, res) => {
     const { title, fields, project } = req.body;
 
     // Map fields to an array of ObjectIds
-    const formattedFields = fields.map(field => new mongoose.Types.ObjectId(field.fieldId));
+    const formattedFields = fields.map(field => new mongoose.Types.ObjectId(field?.fieldId));
 
     const form = new Forms({ title, fields: formattedFields, project: new mongoose.Types.ObjectId(project) });
 
@@ -55,12 +55,20 @@ export const editForm = async (req, res) => {
     const { id } = req.params;
     const { title, fields } = req.body;
 
+    // Map fields to an array of ObjectIds
+    const formattedFields = fields?.map(field => new mongoose.Types.ObjectId(field));
 
     try {
-        const form = await Forms.findByIdAndUpdate(id, { title, fields }, { new: true }).populate('fields');
+        const form = await Forms.findByIdAndUpdate(
+            id,
+            { title, fields: formattedFields },
+            { new: true }
+        ).populate('fields');
+
         if (!form) {
             return res.status(404).send({ message: 'Form not found' });
         }
+
         res.status(200).send(form);
     } catch (error) {
         res.status(400).send(error);
