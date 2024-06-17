@@ -6,11 +6,13 @@ import {
     deleteFormValue,
     getAllFormValue,
     getFormValueId,
-    updateFormValue
+    updateFormValue,
+    getProjectFormValues
 } from "../controllers/FormValuesController.js";
 
-router.get("/getFormValues", getAllFormValue);
+router.get("/getFormValues/:projectId/:formId", getProjectFormValues);
 router.post("/addFormValue", createFormValues);
+router.get("/getProjectFormValues/:projectId/:formId", getAllFormValue)
 router.get('/formsValue/:id', getFormValueId);
 router.delete('/deleteFormValue', deleteFormValue);
 router.put('/updateFormValue/:id', updateFormValue);

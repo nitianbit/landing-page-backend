@@ -36,22 +36,18 @@ export const getProjectById = async (req, res) => {
 }
 
 export const updateProject = async (req, res) => {
-    const updates = Object.keys(req.body);
-    const allowedUpdates = ['name', 'description'];
-    const isValidOperation = updates.every(update => allowedUpdates.includes(update));
-
-    if (!isValidOperation) {
-        return res.status(400).send({ error: 'Invalid updates!' });
-    }
-
+    const { id } = req?.params;
+    const updates = req?.body
     try {
-        const project = await Project.findById(req.params.id);
-        if (!project) {
-            return res.status(404).send();
+        if (!id || updates) {
+            return res.status(400).send({
+                message: " project Id or updates data must be provided"
+            })
         }
-
-        updates.forEach(update => project[update] = req.body[update]);
-        await project.save();
+        const project = await Project.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
+        if (!project) {
+            return res.status(404).send({ message: "project not found" });
+        }
         res.status(200).send(project);
     } catch (error) {
         res.status(400).send(error);

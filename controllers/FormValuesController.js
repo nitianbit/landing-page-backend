@@ -6,7 +6,7 @@ import Form from '../models/FormModal.js'
 // Create form values
 export const createFormValues = async (req, res) => {
     try {
-        const { formId, values } = req.body;
+        const { formId, values, projectId } = req.body;
 
         // Ensure the form exists
         const form = await Form.findById(formId);
@@ -15,10 +15,23 @@ export const createFormValues = async (req, res) => {
         }
 
         // Create form values
-        const formValue = await FormValue.create({ formId, values });
+        const formValue = await FormValue.create({ formId, values, projectId });
         res.json({ success: true, formValueId: formValue._id });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
+    }
+}
+
+export const getProjectFormValues = async (req, res) => {
+    try {
+        const { projectId, formId } = req?.params;
+        const response = await FormValue?.find({
+            projectId,
+            formId
+        })
+        return res.status(200).send(response)
+    } catch (error) {
+
     }
 }
 
