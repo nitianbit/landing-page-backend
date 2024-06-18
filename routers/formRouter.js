@@ -9,10 +9,10 @@ import {
     getFormProject
 } from "../controllers/FormsController.js";
 
-router.get("/getForm", getForm);
+router.get("/getForms", getForm);
 router.post("/addForm", addForm);
-router.get('/Forms/:id', getFormById);
-router.get('/projects/:projectId/Forms', getFormProject);
-router.put('/Forms/:id', editForm);
+router.get('/form/:id', getFormById);
+router.get('/project/:projectId/forms', getFormProject);
+router.put('/forms/:id', editForm);
 
 export default router;

@@ -9,10 +9,10 @@ import {
     deleteField
 } from "../controllers/FieldsController.js";
 
-router.get("/getField", getFields);
+router.get("/getFields", getFields);
 router.post("/addField", addFields)
-router.get('/fields/:id', getFieldById);
-router.put('/fields/:id', editField);
-router.delete('/fields/:id', deleteField);
+router.get('/field/:id', getFieldById);
+router.put('/field/:id', editField);
+router.delete('/field/:id', deleteField);
 
 export default router;
