@@ -5,7 +5,6 @@ import cors from 'cors';
 
 const app = express();
 
-// import morgan from "morgan";
 import mongoose from "mongoose";
 
 import fieldRouter from './routers/fieldRouter.js'

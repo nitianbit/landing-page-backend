@@ -4,7 +4,7 @@ export const addForm = async (req, res) => {
     const { title, fields, project } = req.body;
 
     // Map fields to an array of ObjectIds
-    const formattedFields = fields.map(field => new mongoose.Types.ObjectId(field?.fieldId));
+    const formattedFields = fields.map(field => new mongoose.Types.ObjectId(field));
 
     const form = new Forms({ title, fields: formattedFields, project: new mongoose.Types.ObjectId(project) });
 
