@@ -13,6 +13,6 @@ router.get("/getForms", getForm);
 router.post("/addForm", addForm);
 router.get('/form/:id', getFormById);
 router.get('/project/:projectId/forms', getFormProject);
-router.put('/forms/:id', editForm);
+router.put('/form/:id', editForm);
 
 export default router;
