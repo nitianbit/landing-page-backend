@@ -6,7 +6,7 @@ import Form from '../models/FormModal.js'
 // Create form values
 export const createFormValues = async (req, res) => {
     try {
-        const { formId, values, projectId } = req.body;
+        const { formId, values, projectId, utmParameters } = req.body;
 
         // Ensure the form exists
         const form = await Form.findById(formId);
@@ -15,7 +15,7 @@ export const createFormValues = async (req, res) => {
         }
 
         // Create form values
-        const formValue = await FormValue.create({ formId, values, projectId });
+        const formValue = await FormValue.create({ formId, values, projectId, utmParameters, ipAddress: req?.clientIp });
         res.json({ success: true, formValueId: formValue._id });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });

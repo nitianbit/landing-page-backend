@@ -1,6 +1,8 @@
 import { Router } from "express";
 const router = Router();
 
+import { fetchIPAddress } from '../middleware/IPAddressMiddleware.js'
+
 import {
     createFormValues,
     deleteFormValue,
@@ -11,7 +13,7 @@ import {
 } from "../controllers/FormValuesController.js";
 
 router.get("/getFormValues/:projectId/:formId", getProjectFormValues);
-router.post("/addFormValue", createFormValues);
+router.post("/addFormValue", fetchIPAddress, createFormValues);
 router.get("/getProjectFormValues/:projectId/:formId", getAllFormValue)
 router.get('/formsValue/:id', getFormValueId);
 router.delete('/deleteFormValue', deleteFormValue);
