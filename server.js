@@ -12,6 +12,7 @@ import formRouter from './routers/formRouter.js'
 import formValueRouter from './routers/fieldValueRouter.js'
 import projectRouter from './routers/projectRouter.js'
 import authRouter from './routers/authRouter.js'
+import userRouter from './routers/userRouter.js'
 
 
 app.use(express.json());
@@ -21,7 +22,7 @@ app.get("/api/", (req, res) => {
   res.send("hello world");
 });
 
-app.use("/api", [fieldRouter, formRouter, formValueRouter, projectRouter, authRouter]);
+app.use("/api", [fieldRouter, formRouter, formValueRouter, projectRouter, authRouter, userRouter]);
 
 app.use("*", (req, res) => {
   res.status(404).json({ msg: "not found" });

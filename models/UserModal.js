@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    password: String,
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
     role: {
         type: String,
         enum: ["user", "admin"],
@@ -12,7 +12,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.methods.toJSON = function () {
-    let obj = this.toObject();
+    const obj = this.toObject();
     delete obj.password;
     return obj;
 };
