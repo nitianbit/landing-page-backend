@@ -2,6 +2,7 @@
 
 import FormValue from '../models/FormValueModal.js'
 import Form from '../models/FormModal.js'
+import { sendOtp, verifyOtp } from '../utils/helper.js';
 
 // Create form values
 export const createFormValues = async (req, res) => {
@@ -14,14 +15,18 @@ export const createFormValues = async (req, res) => {
             return res.status(404).json({ success: false, error: 'Form not found' });
         }
 
-        // Send OTP
-        const otpResponse = await sendOtp(phone); // Assuming phone is passed in the request body
+        // if (form.showOTP && !phone) {
+        //     return res.status(400).json({ success: false, error: 'Please provide phone number' });
+        // }
 
-        if (otpResponse?.result !== 'success') {
-            return res.status(400).json({ success: false, error: 'Failed to send OTP' });
+        if (form?.showOTP && phone) {
+            const otpResponse = await sendOtp(phone);
+            if (otpResponse?.result !== 'success') {
+                return res.status(400).json({ success: false, error: 'Failed to send OTP' });
+            }
         }
 
-        // Create form values
+
         const formValue = await FormValue.create({ formId, values, projectId, utmParameters, ipAddress: req?.clientIp });
         res.json({ success: true, formValueId: formValue._id });
     } catch (error) {
