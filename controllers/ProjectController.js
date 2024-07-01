@@ -39,7 +39,7 @@ export const updateProject = async (req, res) => {
     const { id } = req?.params;
     const updates = req?.body
     try {
-        if (!id || updates) {
+        if (!id || !updates) {
             return res.status(400).send({
                 message: " project Id or updates data must be provided"
             })
