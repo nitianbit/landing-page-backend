@@ -6,12 +6,19 @@ import Form from '../models/FormModal.js'
 // Create form values
 export const createFormValues = async (req, res) => {
     try {
-        const { formId, values, projectId, utmParameters } = req.body;
+        const { formId, values, projectId, utmParameters, phone } = req.body;
 
         // Ensure the form exists
         const form = await Form.findById(formId);
         if (!form) {
             return res.status(404).json({ success: false, error: 'Form not found' });
+        }
+
+        // Send OTP
+        const otpResponse = await sendOtp(phone); // Assuming phone is passed in the request body
+
+        if (otpResponse?.result !== 'success') {
+            return res.status(400).json({ success: false, error: 'Failed to send OTP' });
         }
 
         // Create form values
@@ -20,7 +27,25 @@ export const createFormValues = async (req, res) => {
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
-}
+};
+
+export const verifyOtpForFormValues = async (req, res) => {
+    try {
+        const { phone, otp } = req.body;
+
+        // Verify OTP
+        const otpVerification = await verifyOtp(phone, otp);
+
+        if (otpVerification?.result !== 'success') {
+            return res.status(400).json({ success: false, error: 'OTP verification failed' });
+        }
+
+        // Continue with your logic here after OTP verification (e.g., update form values, etc.)
+        res.json({ success: true });
+    } catch (error) {
+        res.status(400).json({ success: false, error: error.message });
+    }
+};
 
 export const getProjectFormValues = async (req, res) => {
     try {
