@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'; 
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt'
 import { CONFIG } from '../utils/config.js';
 

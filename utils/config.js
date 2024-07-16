@@ -1,5 +1,6 @@
-import dotenv from 'dotenv'; 
-import settings from '../settings';
+import dotenv from 'dotenv';
+import settings from '../settings.js';
+import path from 'path'
 
 dotenv.config({ path: path.resolve(settings.PROJECT_DIR, `.env`) });
 
