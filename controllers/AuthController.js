@@ -1,4 +1,6 @@
+import { createToken } from '../auth/index.js';
 import User from '../models/UserModal.js'
+import { sendResponse } from '../utils/helper.js';
 import { hashPassword, comparePassword } from "../utils/passwordUtils.js";
 import { createJWT } from "../utils/tokenUtils.js";
 
@@ -51,45 +53,21 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-        const { email, password, type = "user" } = req.body;
+        const { email, password } = req.body;
 
+        if (!email || !password) {
+            return sendResponse(res, 400, "Invalid Request. Please send all the details.");
+        }
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(401).json({
-                data: {},
-                message: 'Invalid credentials',
-                status: 400
-            });
-        }
-
-        // const type = req?.headers?.["x-api-key"];
-
-        if (type === "web" && user?.role != "admin") {
-            return res.status(401).json({
-                data: {},
-                message: 'Unauthorized User',
-                status: 401
-            });
+            return sendResponse(res, 400, "User not found");
         }
         const isPasswordValid = await comparePassword(password, user.password)
         if (!isPasswordValid) {
-            return res.json({
-                data: {},
-                message: 'Invalid credentials',
-                status: 400
-            });
+            return sendResponse(res, 401, "Invalid credentials");
         }
-
-        const token = createJWT({ userId: user._id, role: user.role, name: user.name });
-
-        res.json({
-            data: {
-                token,
-                user
-            },
-            message: "login successfully",
-            status: 200
-        });
+        const token = createToken({ userId: user._id, role: user.role, name: user.name })
+        return sendResponse(res, 200, "Login successful", { token, user });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
