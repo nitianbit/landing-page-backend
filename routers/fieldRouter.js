@@ -8,11 +8,12 @@ import {
     editField,
     deleteField
 } from "../controllers/FieldsController.js";
+import { isValidAdmin, verifyToken } from "../middleware/authMiddleware.js";
 
-router.get("/getFields", getFields);
-router.post("/addField", addFields)
-router.get('/field/:id', getFieldById);
-router.put('/field/:id', editField);
-router.delete('/field/:id', deleteField);
+router.get("/getFields", verifyToken, isValidAdmin, getFields);
+router.post("/addField", verifyToken, isValidAdmin, addFields)
+router.get('/field/:id', verifyToken, isValidAdmin, getFieldById);
+router.put('/field/:id', verifyToken, isValidAdmin, editField);
+router.delete('/field/:id', verifyToken, isValidAdmin, deleteField);
 
 export default router;

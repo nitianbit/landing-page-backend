@@ -3,7 +3,8 @@ import Fields from '../models/FieldModal.js'
 
 export const addFields = async (req, res) => {
     const { label, type, options } = req.body;
-    const field = new Fields({ label, type, options: options || [] });
+    const user = req.user;
+    const field = new Fields({ label, type, options: options || [], companyId: user.adminOf });
 
     try {
         await field.save();
@@ -15,7 +16,8 @@ export const addFields = async (req, res) => {
 
 export const getFields = async (req, res) => {
     try {
-        const fields = await Fields.find();
+        const user = req.user;
+        const fields = await Fields.find({ companyId: req.user.adminOf });
         res.status(200).send(fields);
     } catch (error) {
         res.status(500).send(error);
