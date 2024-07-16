@@ -1,12 +1,11 @@
 import express from 'express';
 import Project from '../models/ProjectModal.js';
-const router = express.Router();
-
 
 export const createProject = async (req, res) => {
     try {
         const { name } = req.body;
-        const project = new Project({ name });
+        const user = req.user;
+        const project = new Project({ name, companyId: user.adminOf });
         await project.save();
         res.status(201).send(project);
     } catch (error) {
@@ -16,7 +15,8 @@ export const createProject = async (req, res) => {
 
 export const getAllProject = async (req, res) => {
     try {
-        const projects = await Project.find();
+        const user = req.user;
+        const projects = await Project.find({ companyId: user.adminOf });
         res.status(200).send(projects);
     } catch (error) {
         res.status(500).send(error);
@@ -77,6 +77,3 @@ export const deleteProjectById = async (req, res) => {
         res.status(500).send(error);
     }
 }
-
-
-export default router;
