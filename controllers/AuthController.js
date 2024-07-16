@@ -1,95 +1,60 @@
+import { createToken } from '../auth/index.js';
+import { checkorCreateCompany } from '../dao/company.js';
 import User from '../models/UserModal.js'
+import { sendResponse } from '../utils/helper.js';
 import { hashPassword, comparePassword } from "../utils/passwordUtils.js";
 import { createJWT } from "../utils/tokenUtils.js";
 
 export const register = async (req, res) => {
 
     try {
-        const { name, email, password } = req.body;
+        const { companyName, websiteURL, name, email, password } = req.body;
 
-        if (!name || !email || !password) {
-            return res.json({
-                data: {},
-                message: "please fill all required fields",
-                status: 400
-            })
+        if (!companyName || !websiteURL || !email || !password || !name) {
+            return sendResponse(res, 400, "Invalid Request. Please send all the details.");
         }
-
-        const isFirstAccount = (await User.countDocuments()) == 0;
-        req.body.role = isFirstAccount ? "admin" : "user";
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.json({
-                data: {},
-                message: 'User already exists',
-                status: 400
-            });
+            return sendResponse(res, 400, "User already exists");
         }
 
         const hashedPassword = await hashPassword(req.body.password);
         req.body.password = hashedPassword;
 
+        const companyId = await checkorCreateCompany(websiteURL, companyName)
         const newUser = new User({
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            adminOf: companyId,
         });
 
         const user = await newUser.save();
-
-        res.status(201).json({
-            data: user,
-            message: 'User registered successfully',
-            status: 200
-        });
+        sendResponse(res, 201, "User registered successfully");
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        sendResponse(res, 500, "Internal server erro");
     }
 };
 
 export const login = async (req, res) => {
     try {
-        const { email, password, type = "user" } = req.body;
+        const { email, password } = req.body;
 
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(401).json({
-                data: {},
-                message: 'Invalid credentials',
-                status: 400
-            });
+        if (!email || !password) {
+            return sendResponse(res, 400, "Invalid Request. Please send all the details.");
         }
-
-        // const type = req?.headers?.["x-api-key"];
-
-        if (type === "web" && user?.role != "admin") {
-            return res.status(401).json({
-                data: {},
-                message: 'Unauthorized User',
-                status: 401
-            });
+        const user = await User.findOne({ email }).lean();
+        if (!user) {
+            return sendResponse(res, 400, "User not found");
         }
         const isPasswordValid = await comparePassword(password, user.password)
         if (!isPasswordValid) {
-            return res.json({
-                data: {},
-                message: 'Invalid credentials',
-                status: 400
-            });
+            return sendResponse(res, 401, "Invalid credentials");
         }
-
-        const token = createJWT({ userId: user._id, role: user.role, name: user.name });
-
-        res.json({
-            data: {
-                token,
-                user
-            },
-            message: "login successfully",
-            status: 200
-        });
+        const token = createToken(user)
+        return sendResponse(res, 200, "Login successful", { token, user });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });

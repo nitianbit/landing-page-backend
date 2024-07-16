@@ -6,9 +6,10 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     role: {
         type: String,
-        enum: ["user", "admin"],
-        default: "user",
+        enum: [0, 1],
+        default: 1,
     },
+    adminOf: { type: mongoose.Schema.Types.ObjectId, ref: "Company" }
 });
 
 UserSchema.methods.toJSON = function () {
@@ -18,3 +19,8 @@ UserSchema.methods.toJSON = function () {
 };
 
 export default mongoose.model("User", UserSchema);
+
+export const USER_TYPE = {
+    USER: 0,
+    ADMIN: 1
+}

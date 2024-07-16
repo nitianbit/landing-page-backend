@@ -11,12 +11,13 @@ import {
     updateFormValue,
     getProjectFormValues
 } from "../controllers/FormValuesController.js";
+import { isValidAdmin, verifyToken } from "../middleware/authMiddleware.js";
 
-router.get("/getFormValues/:projectId/:formId", getProjectFormValues);
+router.get("/getFormValues/:projectId/:formId", verifyToken, isValidAdmin, getProjectFormValues);
 router.post("/addFormValue", fetchIPAddress, createFormValues);
-router.get("/getProjectFormValues/:projectId/:formId", getAllFormValue)
-router.get('/formsValue/:id', getFormValueId);
-router.delete('/deleteFormValue', deleteFormValue);
-router.put('/updateFormValue/:id', updateFormValue);
+router.get("/getProjectFormValues/:projectId/:formId", verifyToken, isValidAdmin, getAllFormValue)
+router.get('/formsValue/:id', verifyToken, isValidAdmin, getFormValueId);
+router.delete('/deleteFormValue', verifyToken, isValidAdmin, deleteFormValue);
+router.put('/updateFormValue/:id', verifyToken, isValidAdmin, updateFormValue);
 
 export default router;
