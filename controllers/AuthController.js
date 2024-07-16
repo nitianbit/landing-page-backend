@@ -1,4 +1,5 @@
 import { createToken } from '../auth/index.js';
+import { checkorCreateCompany } from '../dao/company.js';
 import User from '../models/UserModal.js'
 import { sendResponse } from '../utils/helper.js';
 import { hashPassword, comparePassword } from "../utils/passwordUtils.js";
@@ -7,47 +8,33 @@ import { createJWT } from "../utils/tokenUtils.js";
 export const register = async (req, res) => {
 
     try {
-        const { name, email, password } = req.body;
+        const { companyName, websiteURL, name, email, password } = req.body;
 
-        if (!name || !email || !password) {
-            return res.json({
-                data: {},
-                message: "please fill all required fields",
-                status: 400
-            })
+        if (!companyName || !websiteURL || !email || !password || !name) {
+            return sendResponse(res, 400, "Invalid Request. Please send all the details.");
         }
-
-        const isFirstAccount = (await User.countDocuments()) == 0;
-        req.body.role = isFirstAccount ? "admin" : "user";
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.json({
-                data: {},
-                message: 'User already exists',
-                status: 400
-            });
+            return sendResponse(res, 400, "User already exists");
         }
 
         const hashedPassword = await hashPassword(req.body.password);
         req.body.password = hashedPassword;
 
+        const companyId = await checkorCreateCompany(websiteURL, companyName)
         const newUser = new User({
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            adminOf: companyId,
         });
 
         const user = await newUser.save();
-
-        res.status(201).json({
-            data: user,
-            message: 'User registered successfully',
-            status: 200
-        });
+        sendResponse(res, 201, "User registered successfully");
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        sendResponse(res, 500, "Internal server erro");
     }
 };
 
