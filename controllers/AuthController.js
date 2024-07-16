@@ -60,3 +60,13 @@ export const login = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+export const getCurrentProfile = async (req, res) => {
+    try {
+        const user = req.user
+        return sendResponse(res, 200, "", user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
