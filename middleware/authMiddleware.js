@@ -8,7 +8,7 @@ export const verifyToken = (req, res, next) => {
         if (!token) return sendResponse(res, 401, "UnAuthorized.");
         const decodedData = decodeToken(token);
         if (!decodedData.success) return sendResponse(res, 401, "UnAuthorized.");
-        req.user = { ...decodedData.data, isAdmin: decodedData.data.role === USER_TYPE.ADMIN };
+        req.user = { ...decodedData.data, isAdmin: decodedData.data.role == USER_TYPE.ADMIN };
         next();
     } catch (error) {
         console.log(error)
