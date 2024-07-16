@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema({
         enum: [0, 1],
         default: 1,
     },
+    adminOf: { type: mongoose.Schema.Types.ObjectId, ref: "Company" }
 });
 
 UserSchema.methods.toJSON = function () {
