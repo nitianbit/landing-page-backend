@@ -45,7 +45,7 @@ export const login = async (req, res) => {
         if (!email || !password) {
             return sendResponse(res, 400, "Invalid Request. Please send all the details.");
         }
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).lean();
         if (!user) {
             return sendResponse(res, 400, "User not found");
         }
@@ -53,7 +53,7 @@ export const login = async (req, res) => {
         if (!isPasswordValid) {
             return sendResponse(res, 401, "Invalid credentials");
         }
-        const token = createToken({ userId: user._id, role: user.role, name: user.name })
+        const token = createToken(user)
         return sendResponse(res, 200, "Login successful", { token, user });
     } catch (error) {
         console.error(error);
