@@ -1,12 +1,12 @@
 import Forms from '../models/FormModal.js'
 import mongoose from 'mongoose';
 export const addForm = async (req, res) => {
-    const { title, fields, project } = req.body;
+    const { title, fields, project, requiredFields = [] } = req.body;
 
     // Map fields to an array of ObjectIds
     const formattedFields = fields.map(field => new mongoose.Types.ObjectId(field));
 
-    const form = new Forms({ title, fields: formattedFields, project: new mongoose.Types.ObjectId(project) });
+    const form = new Forms({ title, fields: formattedFields, requiredFields, project: new mongoose.Types.ObjectId(project) });
 
     try {
         await form.save();
@@ -53,7 +53,7 @@ export const getFormById = async (req, res) => {
 
 export const editForm = async (req, res) => {
     const { id } = req.params;
-    const { title, fields, showOTP = false } = req.body;
+    const { title, fields, showOTP = false, requiredFields = [] } = req.body;
 
     // Map fields to an array of ObjectIds
     const formattedFields = fields?.map(field => new mongoose.Types.ObjectId(field));
@@ -61,7 +61,7 @@ export const editForm = async (req, res) => {
     try {
         const form = await Forms.findByIdAndUpdate(
             id,
-            { title, fields: formattedFields, showOTP },
+            { title, fields: formattedFields, showOTP, requiredFields },
             { new: true }
         ).populate('fields');
 
