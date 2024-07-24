@@ -1,15 +1,33 @@
 import Forms from '../models/FormModal.js'
 import mongoose from 'mongoose';
+export const addFOrmHelper = async (title, fields, project) => {
+    try {
+        const formattedFields = fields.map(field => ({
+            field: field._id,
+            required: field.required
+        }));
+        const form = new Forms({ title, fields: formattedFields, project: new mongoose.Types.ObjectId(project) });
+        await form.save();
+        return form;
+    } catch (error) {
+
+    }
+}
 export const addForm = async (req, res) => {
-    const { title, fields, project, requiredFields = [] } = req.body;
+    const { title, fields, project } = req.body;
 
     // Map fields to an array of ObjectIds
-    const formattedFields = fields.map(field => new mongoose.Types.ObjectId(field));
+    // const formattedFields = fields.map(field => new mongoose.Types.ObjectId(field));
+    // const formattedFields = fields.map(field => ({
+    //     field: field._id,
+    //     required: field.required
+    // }));
 
-    const form = new Forms({ title, fields: formattedFields, requiredFields, project: new mongoose.Types.ObjectId(project) });
+    // const form = new Forms({ title, fields: formattedFields, project: new mongoose.Types.ObjectId(project) });
 
     try {
-        await form.save();
+        // await form.save();
+        const form = await addFOrmHelper(title, fields, project)
         res.status(201).send(form);
     } catch (error) {
         res.status(400).send(error);
