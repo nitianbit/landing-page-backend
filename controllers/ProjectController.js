@@ -21,7 +21,7 @@ export const createProject = async (req, res) => {
 export const getAllProject = async (req, res) => {
     try {
         const user = req.user;
-        const projects = await Project.find({ companyId: user.adminOf });
+        const projects = await Project.find({ companyId: user.adminOf, parent: null });
         res.status(200).send(projects);
     } catch (error) {
         res.status(500).send(error);
