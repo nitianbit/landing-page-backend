@@ -13,6 +13,7 @@ const formValueSchema = new mongoose.Schema({
     utmParameters: { type: Map, of: String },
     ipAddress: { type: String },
     projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true },
+    refererId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
     submittedAt: { type: Date, default: Date.now }
 });
 
