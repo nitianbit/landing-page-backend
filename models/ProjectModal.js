@@ -6,6 +6,7 @@ const projectSchema = new mongoose.Schema({
     domain: { type: String, unique: true },
     companyId: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
     parent: { type: mongoose.Schema.Types.ObjectId, ref: "Project" },
+    forms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Form" }],//childforms
 });
 
 const Project = mongoose.model('Project', projectSchema);
