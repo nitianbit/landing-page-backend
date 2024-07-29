@@ -7,7 +7,7 @@ import { sendOtp, verifyOtp } from '../utils/helper.js';
 // Create form values
 export const createFormValues = async (req, res) => {
     try {
-        const { formId, values, projectId, utmParameters, phone } = req.body;
+        const { formId, values, projectId,refererId=null, utmParameters, phone } = req.body;
 
         // Ensure the form exists
         const form = await Form.findById(formId);
@@ -28,7 +28,7 @@ export const createFormValues = async (req, res) => {
         }
 
 
-        const formValue = await FormValue.create({ formId, values, projectId, utmParameters, ipAddress: req?.clientIp });
+        const formValue = await FormValue.create({ formId, values, projectId, utmParameters, ipAddress: req?.clientIp ,...(refererId && { refererId }) });
         res.json({ success: true, formValueId: formValue._id });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
@@ -55,10 +55,12 @@ export const verifyOtpForFormValues = async (req, res) => {
 
 export const getProjectFormValues = async (req, res) => {
     try {
-        const { projectId, formId } = req?.params;
+        const { projectId, formId, } = req?.params;
+        const {refererId=""}=req.query;
         const response = await FormValue?.find({
             projectId,
-            formId
+            formId,
+            ...(refererId && { refererId: { $in: [refererId] } })
         })
         return res.status(200).send(response)
     } catch (error) {
