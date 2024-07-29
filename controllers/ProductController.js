@@ -22,7 +22,12 @@ export const getProductsByProject = async (req, res) => {
             return res.status(400).json({ message: 'ProjectId is required' });
         }
 
-        const products = await Project.find({ parent: id });
+        const products = await Project.find({ parent: id }).populate({
+            path: 'forms',
+            populate: {
+                path: 'fields'
+            }
+        });;
         res.status(200).json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -58,7 +63,12 @@ export const updateProduct = async (req, res) => {
             req.params.productId,
             { name, description, forms },
             { new: true }
-        );
+        ).populate({
+            path: 'forms',
+            populate: {
+                path: 'fields'
+            }
+        });
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
