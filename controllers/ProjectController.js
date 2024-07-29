@@ -1,12 +1,19 @@
-import express from 'express';
+import mongoose from 'mongoose';
 import Project from '../models/ProjectModal.js';
+import { addFOrmHelper } from './FormsController.js';
 
 export const createProject = async (req, res) => {
     try {
-        const { name } = req.body;
+        const { name, domain, description = "" } = req.body;
         const user = req.user;
-        const project = new Project({ name, companyId: user.adminOf });
-        await project.save();
+        const project = await new Project({ name, domain, description, companyId: user.adminOf }).save();
+
+        await addFOrmHelper({ title: "Lead Form", fields: [], project: project?._id, formIndex: 1 })
+        await addFOrmHelper({ title: "FollowUp Form", fields: [], project: project?._id, formIndex: 2 })
+        await addFOrmHelper({ title: "Contact Us Form", fields: [], project: project?._id, formIndex: 3 })
+
+        // await addFOrmHelper("", [], new mongoose.Types.ObjectId(project?._id), 2)
+
         res.status(201).send(project);
     } catch (error) {
         res.status(400).send(error);
@@ -16,7 +23,7 @@ export const createProject = async (req, res) => {
 export const getAllProject = async (req, res) => {
     try {
         const user = req.user;
-        const projects = await Project.find({ companyId: user.adminOf });
+        const projects = await Project.find({ companyId: user.adminOf, parent: null });
         res.status(200).send(projects);
     } catch (error) {
         res.status(500).send(error);
