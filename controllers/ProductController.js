@@ -33,7 +33,14 @@ export const getProductsByProject = async (req, res) => {
 // Get a product by ID
 export const getProductById = async (req, res) => {
     try {
+        // const product = await Project.findById(req.params.productId).populate("forms")
         const product = await Project.findById(req.params.productId)
+            .populate({
+                path: 'forms',
+                populate: {
+                    path: 'fields'
+                }
+            });
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
@@ -46,10 +53,10 @@ export const getProductById = async (req, res) => {
 // Update a product
 export const updateProduct = async (req, res) => {
     try {
-        const { name, description } = req.body;
+        const { name, description, useParentForms = true, forms = [] } = req.body;
         const product = await Project.findByIdAndUpdate(
             req.params.productId,
-            { name, description },
+            { name, description, forms },
             { new: true }
         );
         if (!product) {
