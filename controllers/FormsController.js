@@ -90,3 +90,18 @@ export const editForm = async (req, res) => {
         res.status(400).send(error);
     }
 };
+export const deleteForm = async (req, res) => {
+    const { id } = req.params;
+    if(!id){
+        return res.status(404).send({ message: 'Form not found' });
+    }
+    try {
+        const form = await Forms.findByIdAndDelete(id);
+        if (!form) {
+            return res.status(404).send({ message: 'Form not found' });
+        }
+        res.status(200).send(form);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+};

@@ -6,7 +6,8 @@ import {
     getForm,
     editForm,
     getFormById,
-    getFormProject
+    getFormProject,
+    deleteForm
 } from "../controllers/FormsController.js";
 import { isValidAdmin, verifyToken } from "../middleware/authMiddleware.js";
 
@@ -15,5 +16,6 @@ router.post("/addForm", verifyToken, isValidAdmin, addForm);
 router.get('/form/:id', getFormById);
 router.get('/project/:projectId/forms', getFormProject);
 router.put('/form/:id', verifyToken, isValidAdmin, editForm);
+router.delete('/form/:id/delete', verifyToken, isValidAdmin, deleteForm);
 
 export default router;
