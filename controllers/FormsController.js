@@ -1,33 +1,31 @@
 import Forms from '../models/FormModal.js'
 import mongoose from 'mongoose';
-export const addFOrmHelper = async (title, fields, project) => {
+export const addFOrmHelper = async ({ title, fields, project = "", formIndex, requiredFields = [], showOTP = false }) => {
     try {
-        const formattedFields = fields.map(field => ({
-            field: field._id,
-            required: field.required
-        }));
-        const form = new Forms({ title, fields: formattedFields, project: new mongoose.Types.ObjectId(project) });
+        const formattedFields = fields.map(fieldId => new mongoose.Types.ObjectId(fieldId));
+        const formattedRequiredFields = requiredFields.map(fieldId => new mongoose.Types.ObjectId(fieldId));
+
+        // Create a new form
+        const form = new Forms({
+            title,
+            fields: formattedFields,
+            requiredFields: formattedRequiredFields,
+            project: new mongoose.Types.ObjectId(project),
+            formIndex,
+            showOTP
+        });
         await form.save();
+
         return form;
     } catch (error) {
-
+        throw new Error(error.message);;
     }
 }
 export const addForm = async (req, res) => {
-    const { title, fields, project } = req.body;
-
-    // Map fields to an array of ObjectIds
-    // const formattedFields = fields.map(field => new mongoose.Types.ObjectId(field));
-    // const formattedFields = fields.map(field => ({
-    //     field: field._id,
-    //     required: field.required
-    // }));
-
-    // const form = new Forms({ title, fields: formattedFields, project: new mongoose.Types.ObjectId(project) });
+    const { title, fields, project, formIndex, requiredFields, showOTP = false } = req.body;
 
     try {
-        // await form.save();
-        const form = await addFOrmHelper(title, fields, project)
+        const form = await addFOrmHelper({ title, fields, project, formIndex, requiredFields, showOTP })
         res.status(201).send(form);
     } catch (error) {
         res.status(400).send(error);
