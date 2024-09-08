@@ -62,9 +62,14 @@ export const getProjectFormValues = async (req, res) => {
             formId,
             ...(refererId && { refererId: { $in: [refererId] } })
         })
+        if (req.query.download) {
+            const csvData = convertToCsv(response);
+            return res.status(200).send({ data: csvData });
+        }
         return res.status(200).send(response)
     } catch (error) {
-
+        console.log(error);
+        res.status(400).json({ success: false, error: error.message });  
     }
 }
 
