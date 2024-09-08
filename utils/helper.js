@@ -40,3 +40,57 @@ export const sendResponse = (res, statusCode, message, data = null) => {
         data: data
     });
 }
+
+
+
+// export const convertToCsv=(dataArray)=> {
+
+//     const headers = ['Name', 'Email', 'Property Type', 'Mobile No', 'IP Address'];
+
+//     const rows = dataArray.map(data => {
+//         const name = data?.values?.[0]?.value || '';
+//         const email = data?.values?.[1]?.value || '';
+//         const propertyType = data?.values?.[2]?.value || '';
+//         const mobileNo = data?.values?.[3]?.value || '';
+//         const ipAddress = data?.ipAddress || '';
+        
+//         return [name, email, propertyType, mobileNo, ipAddress].join(',');
+//     });
+
+//     const csv = [headers.join(','), ...rows].join('\n');
+//     return csv;
+//   }
+export const convertToCsv=(dataArray)=> {
+ 
+        const fieldMap = {
+            '6696c938133873a9dbd3fa8c': 'Name',
+            '6696cdc6133873a9dbd3fa93': 'Email',
+            '6696d308133873a9dbd3fb46': 'Property Type',
+            '6696d3c5133873a9dbd3fb8b': 'Mobile No'
+        };
+    
+         const headers = ['Name', 'Email', 'Property Type', 'Mobile No', 'IP Address'];
+    
+         const rows = dataArray.map(data => {
+             const extractedValues = {
+                'Name': '',
+                'Email': '',
+                'Property Type': '',
+                'Mobile No': '',
+                'IP Address': data.ipAddress || ''
+            };
+    
+             data.values.forEach(value => {
+                if (fieldMap[value.fieldId]) {
+                    extractedValues[fieldMap[value.fieldId]] = value.value;
+                }
+            });
+    
+             return headers.map(header => extractedValues[header] || '').join(',');
+        });
+    
+         const csv = [headers.join(','), ...rows].join('\n');
+    
+        return csv;
+    }
+
