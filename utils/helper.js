@@ -69,15 +69,16 @@ export const convertToCsv=(dataArray)=> {
             '6696d3c5133873a9dbd3fb8b': 'Mobile No'
         };
     
-         const headers = ['Name', 'Email', 'Property Type', 'Mobile No', 'IP Address'];
-    
+         const headers = ['Name', 'Email', 'Property Type', 'Mobile No', 'IP Address','Project Name','Product Name'];    
          const rows = dataArray.map(data => {
              const extractedValues = {
                 'Name': '',
                 'Email': '',
                 'Property Type': '',
                 'Mobile No': '',
-                'IP Address': data.ipAddress || ''
+                'IP Address': data.ipAddress || '',
+                'Project Name': data?.projectId?.name || '-',
+                'Product Name': data?.refererId?.value || '-'
             };
     
              data.values.forEach(value => {
