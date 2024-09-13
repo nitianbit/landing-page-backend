@@ -22,10 +22,10 @@ export const addFOrmHelper = async ({ title,type, fields, project = "", required
     }
 }
 export const addForm = async (req, res) => {
-    const { title, fields, project, formIndex, requiredFields, showOTP = false } = req.body;
+    const { title, fields, project, formIndex, requiredFields, showOTP = false, type } = req.body;
 
     try {
-        const form = await addFOrmHelper({ title, fields, project, formIndex, requiredFields, showOTP })
+        const form = await addFOrmHelper({ title, fields,type, project, formIndex, requiredFields, showOTP })
         res.status(201).send(form);
     } catch (error) {
         res.status(400).send(error);
