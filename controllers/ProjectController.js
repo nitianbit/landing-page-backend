@@ -8,9 +8,9 @@ export const createProject = async (req, res) => {
         const user = req.user;
         const project = await new Project({ name, domain, description, companyId: user.adminOf }).save();
 
-        await addFOrmHelper({ title: "Lead Form", fields: [], project: project?._id, formIndex: 1 })
-        await addFOrmHelper({ title: "FollowUp Form", fields: [], project: project?._id, formIndex: 2 })
-        await addFOrmHelper({ title: "Contact Us Form", fields: [], project: project?._id, formIndex: 3 })
+        // await addFOrmHelper({ title: "FollowUp Form",type:"Form", fields: [], project: project?._id })
+        await addFOrmHelper({ title: "Contact Us Form", type:"contact",fields: [], project: project?._id })
+        await addFOrmHelper({ title: "Client Form",type:"client", fields: [], project: project?._id })
 
         // await addFOrmHelper("", [], new mongoose.Types.ObjectId(project?._id), 2)
 
