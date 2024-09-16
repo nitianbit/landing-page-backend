@@ -46,7 +46,7 @@ export const getFormProject = async (req, res) => {
     try {
         const {type} = req.query;
         const filter = {
-            ...(type&&{type}),
+            ...(type&&{type:{$in:type.includes("in")?type.substring(3,type.length-1).split(","):[type]}}),
             project:req.params.projectId 
         }
         const forms = await Forms.find(filter).populate('fields');
