@@ -7,7 +7,7 @@ import { sendOtp, verifyOtp } from '../utils/helper.js';
 // Create form values
 export const createFormValues = async (req, res) => {
     try {
-        const { formId, values, projectId,refererId=null, utmParameters, phone } = req.body;
+        const { formId, values, projectId, refererId = null, utmParameters, phone } = req.body;
 
         // Ensure the form exists
         const form = await Form.findById(formId);
@@ -28,7 +28,7 @@ export const createFormValues = async (req, res) => {
         }
 
 
-        const formValue = await FormValue.create({ formId, values, projectId, utmParameters, ipAddress: req?.clientIp ,...(refererId && { refererId }) });
+        const formValue = await FormValue.create({ formId, values, projectId, utmParameters, ipAddress: req?.clientIp, ...(refererId && { refererId }) });
         res.json({ success: true, formValueId: formValue._id });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
@@ -56,27 +56,27 @@ export const verifyOtpForFormValues = async (req, res) => {
 export const getProjectFormValues = async (req, res) => {
     try {
         const { projectId, formId, } = req?.params;
-        const {refererId=""}=req.query;
-                const query=FormValue?.find({
+        const { refererId = "" } = req.query;
+        const query = FormValue?.find({
             projectId,
             formId,
             ...(refererId && { refererId: { $in: [refererId] } })
         });
-        
-        if(req.query.download){
+
+        if (req.query.download) {
             query.populate({
                 path: 'projectId',
-                select: 'name'  
+                select: 'name'
             })
-            .populate({
-                path: 'refererId',
-                select: 'name' 
-            });
-    
+                .populate({
+                    path: 'refererId',
+                    select: 'name'
+                });
+
         }
-        
+
         const response = await query.lean(true);
-        
+
         if (req.query.download) {
             const csvData = convertToCsv(response);
             return res.status(200).send({ data: csvData });
@@ -84,7 +84,7 @@ export const getProjectFormValues = async (req, res) => {
         return res.status(200).send(response)
     } catch (error) {
         console.log(error);
-        res.status(400).json({ success: false, error: error.message });  
+        res.status(400).json({ success: false, error: error.message });
     }
 }
 
