@@ -2,7 +2,7 @@
 
 import FormValue from '../models/FormValueModal.js'
 import Form from '../models/FormModal.js'
-import { sendOtp, verifyOtp,convertToCsv } from '../utils/helper.js';
+import { convertToCsv, pagination, sendOtp, verifyOtp } from '../utils/helper.js';
 
 // Create form values
 export const createFormValues = async (req, res) => {
@@ -55,13 +55,14 @@ export const verifyOtpForFormValues = async (req, res) => {
 
 export const getProjectFormValues = async (req, res) => {
     try {
-        const { projectId, formId, } = req?.params;
-        const { refererId = "" } = req.query;
-        const query = FormValue?.find({
+        const { projectId, formId} = req?.params;
+        const { refererId = "", page=1, rows=10 } = req.query;
+        const filters = {
             projectId,
             formId,
             ...(refererId && { refererId: { $in: [refererId] } })
-        });
+        }
+        const query = FormValue?.find(filters);
 
         if (req.query.download) {
             query.populate({
@@ -75,10 +76,12 @@ export const getProjectFormValues = async (req, res) => {
 
         }
 
-        const response = await query.lean(true);
+        // const response = await query.lean(true);
+
+        const response = await pagination(FormValue, query, Number(page), Number(rows), filters)
 
         if (req.query.download) {
-            const csvData = convertToCsv(response);
+            const csvData = convertToCsv(response.data?.rows);
             return res.status(200).send({ data: csvData });
         }
         return res.status(200).send(response)
