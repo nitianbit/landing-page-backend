@@ -60,6 +60,23 @@ export const sendResponse = (res, statusCode, message, data = null) => {
 //     const csv = [headers.join(','), ...rows].join('\n');
 //     return csv;
 //   }
+
+export const pagination = async (model ,query, page, limit, filters = {}) => {
+    //if page ==-1 return all users else pagination
+     if (page !== -1) {
+        const skip = (page - 1) * limit;
+        query = query.skip(skip).limit(limit);
+    }
+    let data = {
+        rows: await query.lean()
+    }
+
+    if (page == 1) {
+        const total = await model.countDocuments(filters);
+        data = { data, total };
+    }
+    return data;
+}
 export const convertToCsv=(dataArray)=> {
  
         const fieldMap = {
