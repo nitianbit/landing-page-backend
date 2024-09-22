@@ -2,9 +2,9 @@ import Fields from '../models/FieldModal.js'
 
 
 export const addFields = async (req, res) => {
-    const { label, type, options } = req.body;
+    const { label,name, type, options } = req.body;
     const user = req.user;
-    const field = new Fields({ label, type, options: options || [], companyId: user.adminOf });
+    const field = new Fields({ label,name, type, options: options || [], companyId: user.adminOf });
 
     try {
         await field.save();
@@ -40,10 +40,10 @@ export const getFieldById = async (req, res) => {
 
 export const editField = async (req, res) => {
     const { id } = req.params;
-    const { label, type, options } = req.body;
+    const { label,name, type, options } = req.body;
 
     try {
-        const field = await Fields.findByIdAndUpdate(id, { label, type, options: options || [] }, { new: true });
+        const field = await Fields.findByIdAndUpdate(id, { label,name, type, options: options || [] }, { new: true });
         if (!field) {
             return res.status(404).send({ message: 'Field not found' });
         }
