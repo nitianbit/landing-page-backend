@@ -2,6 +2,7 @@
 
 import FormValue from '../models/FormValueModal.js'
 import Form from '../models/FormModal.js'
+import Fields from '../models/FieldModal.js'
 import { convertToCsv, pagination, sendOtp, verifyOtp } from '../utils/helper.js';
 
 // Create form values
@@ -81,7 +82,8 @@ export const getProjectFormValues = async (req, res) => {
         const response = await pagination(FormValue, query, Number(page), Number(rows), filters)
 
         if (req.query.download) {
-            const csvData = convertToCsv(response.data?.rows);
+            const fields = await Fields.find({ companyId: req.user.adminOf }).lean();
+            const csvData =  convertToCsv(response.data?.rows, fields, headers);
             return res.status(200).send({ data: csvData });
         }
         return res.status(200).send(response)
