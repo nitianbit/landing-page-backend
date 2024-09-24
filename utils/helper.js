@@ -77,14 +77,22 @@ export const pagination = async (model ,query, page, limit, filters = {}) => {
     }
     return data;
 }
-export const convertToCsv=(dataArray)=> {
+export const convertToCsv= (dataArray, fields)=> {
  
-        const fieldMap = {
-            '6696c938133873a9dbd3fa8c': 'Name',
-            '6696cdc6133873a9dbd3fa93': 'Email',
-            '6696d308133873a9dbd3fb46': 'Property Type',
-            '6696d3c5133873a9dbd3fb8b': 'Mobile No'
-        };
+        // const fieldMap = {
+        //     '6696c938133873a9dbd3fa8c': 'Name',
+        //     '6696cdc6133873a9dbd3fa93': 'Email',
+        //     '6696d308133873a9dbd3fb46': 'Property Type',
+        //     '6696d3c5133873a9dbd3fb8b': 'Mobile No'
+        // };
+
+        // const fields = await Fields.find({ companyId: req.user.adminOf });
+        const fieldMap = fields?.reduce((prev, cur)=>{
+            if(!prev) prev = {}
+            prev[cur?._id] = cur?.label
+            return prev;
+        },{})
+
     
          const headers = ['Name', 'Email', 'Property Type', 'Mobile No', 'IP Address','Project Name','Product Name'];    
          const rows = dataArray.map(data => {
