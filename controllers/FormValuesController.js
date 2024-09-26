@@ -20,6 +20,7 @@ export const createFormValues = async (req, res) => {
         // if (form.showOTP && !phone) {
         //     return res.status(400).json({ success: false, error: 'Please provide phone number' });
         // }
+        const formValue = await FormValue.create({ formId, values, projectId, utmParameters, ipAddress: req?.clientIp, ...(refererId && { refererId }) });
 
         if (form?.showOTP && phone) {
             const otpResponse = await sendOtp(phone);
@@ -27,14 +28,21 @@ export const createFormValues = async (req, res) => {
                 return res.status(400).json({ success: false, error: 'Failed to send OTP' });
             }
         }
-
-
-        const formValue = await FormValue.create({ formId, values, projectId, utmParameters, ipAddress: req?.clientIp, ...(refererId && { refererId }) });
         res.json({ success: true, formValueId: formValue._id });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
 };
+
+export const sendOTP = async (req, res)=>{
+    try {
+        const {phone} = req.body;
+        const response = await sendOtp(phone);
+        return res.status(200).json({ success: true,data:response});
+    } catch (error) {
+        res.status(400).json({ success: false, error: error.message });
+    }
+}
 
 export const verifyOtpForFormValues = async (req, res) => {
     try {
@@ -46,6 +54,8 @@ export const verifyOtpForFormValues = async (req, res) => {
         if (otpVerification?.result !== 'success') {
             return res.status(400).json({ success: false, error: 'OTP verification failed' });
         }
+
+        await FormValue.findByIdAndUpdate(req.params.formValueId, { isOTPValidate:true });
 
         // Continue with your logic here after OTP verification (e.g., update form values, etc.)
         res.json({ success: true });
@@ -83,7 +93,7 @@ export const getProjectFormValues = async (req, res) => {
 
         if (req.query.download) {
             const fields = await Fields.find({ companyId: req.user.adminOf }).lean();
-            const csvData =  convertToCsv(response.data?.rows, fields, headers);
+            const csvData =  convertToCsv(response?.rows, fields);
             return res.status(200).send({ data: csvData });
         }
         return res.status(200).send(response)
