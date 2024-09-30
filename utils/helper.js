@@ -126,8 +126,8 @@ export const convertToCsv = (dataArray, fields) => {
         return prev;
     }, {})
 
-
-    const headers = ['Name', 'Email', 'Property Type', 'Mobile No', 'IP Address', 'Project Name', 'Product Name'];
+    // const headers = ['Name', 'Email', 'Property Type', 'Mobile No', 'IP Address', 'Project Name', 'Product Name'];
+    const headers = Object.values(fieldMap)
     const rows = dataArray.map(data => {
         const extractedValues = {
             'Name': '',
@@ -152,4 +152,3 @@ export const convertToCsv = (dataArray, fields) => {
 
     return csv;
 }
-
