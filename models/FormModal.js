@@ -7,7 +7,8 @@ const formSchema = new mongoose.Schema({
     fields: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Field' }],
     requiredFields: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Field' }],
     project: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
-    showOTP: { type: Boolean, default: false }
+    showOTP: { type: Boolean, default: false },
+    utmParameters:{type:[String]}
 });
 
 const Form = mongoose.model('Form', formSchema);
