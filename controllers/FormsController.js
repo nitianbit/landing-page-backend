@@ -90,7 +90,7 @@ export const getAForm = async(req, res)=>{
 
 export const editForm = async (req, res) => {
     const { id } = req.params;
-    const { title, fields, showOTP = false, requiredFields = [] } = req.body;
+    const { title, fields, showOTP = false, requiredFields = [], utmParameters } = req.body;
 
     // Map fields to an array of ObjectIds
     const formattedFields = fields?.map(field => new mongoose.Types.ObjectId(field));
@@ -98,7 +98,7 @@ export const editForm = async (req, res) => {
     try {
         const form = await Forms.findByIdAndUpdate(
             id,
-            { title, fields: formattedFields, showOTP, requiredFields },
+            { title, fields: formattedFields, showOTP, requiredFields, utmParameters },
             { new: true }
         ).populate('fields');
 
