@@ -73,7 +73,7 @@ export const getProjectFormValues = async (req, res) => {
             formId,
             ...(refererId && { refererId: { $in: [refererId] } })
         }
-        const query = FormValue?.find(filters);
+        const query = FormValue?.find(filters).sort({ _id: -1 });;
 
         if (req.query.download) {
             query.populate({
