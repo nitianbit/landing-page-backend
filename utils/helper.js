@@ -110,45 +110,96 @@ export const pagination = async (model, query, page, limit, filters = {}) => {
     }
     return data;
 }
-export const convertToCsv = (dataArray, fields) => {
+// export const convertToCsv = (dataArray, form) => {
 
-    // const fieldMap = {
-    //     '6696c938133873a9dbd3fa8c': 'Name',
-    //     '6696cdc6133873a9dbd3fa93': 'Email',
-    //     '6696d308133873a9dbd3fb46': 'Property Type',
-    //     '6696d3c5133873a9dbd3fb8b': 'Mobile No'
-    // };
+//     const fieldMap = form?.reduce((prev, cur) => {
+//         if (!prev) prev = {}
+//         prev[cur?._id] = cur?.label
+//         return prev;
+//     }, {})
 
-    // const fields = await Fields.find({ companyId: req.user.adminOf });
-    const fieldMap = fields?.reduce((prev, cur) => {
-        if (!prev) prev = {}
-        prev[cur?._id] = cur?.label
+//     const headers = Object.values(fieldMap)
+//     const rows = dataArray.map(data => {
+//         const extractedValues = {
+//             'IP Address': data.ipAddress || '',
+//             'Project Name': data?.projectId?.name || '-',
+//             'Product Name': data?.refererId?.value || '-',
+//             "Date":"",
+//             "Time":""
+//         };
+
+//         data.values.forEach(value => {
+//             if (fieldMap[value.fieldId]) {
+//                 extractedValues[fieldMap[value.fieldId]] = value.value;
+//             }
+//         });
+
+//         return headers.map(header => extractedValues[header] || '').join(',');
+//     });
+
+//     const csv = [headers.join(','), ...rows].join('\n');
+
+//     return csv;
+// }
+
+function formatDate(date) {
+    if (!date) return 'Date not available';
+  
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const year = date.getFullYear();
+  
+    return `${day}-${month}-${year}`;
+  }
+
+  function formatTime(date) {
+    if (!date) return 'Time not available';
+  
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+  
+    return `${hours}:${minutes}:${seconds}`;
+  }
+
+export const convertToCsv = (dataArray, form) => {
+    // Create a map from field `_id` to `label`
+    const fieldMap = form.fields.reduce((prev, cur) => {
+        prev[cur._id.toString()] = cur.label; // Ensure `_id` is a string
         return prev;
-    }, {})
+    }, {});
 
-    // const headers = ['Name', 'Email', 'Property Type', 'Mobile No', 'IP Address', 'Project Name', 'Product Name'];
-    const headers = Object.values(fieldMap)
+    // Generate CSV headers by extracting values from fieldMap
+    const headers = [
+        'IP Address',
+        'Project Name',
+        'Product Name',
+        'Date',
+        'Time',
+        ...Object.values(fieldMap),
+    ];
+
+    // Generate CSV rows
     const rows = dataArray.map(data => {
         const extractedValues = {
-            'Name': '',
-            'Email': '',
-            'Property Type': '',
-            'Mobile No': '',
             'IP Address': data.ipAddress || '',
             'Project Name': data?.projectId?.name || '-',
-            'Product Name': data?.refererId?.value || '-'
+            'Product Name': data?.refererId?.value || '-',
+            'Date': formatDate(data?.submittedAt), // Include logic if date information is available
+            'Time': formatTime(data?.submittedAt), // Include logic if time information is available
         };
 
+        // Map custom field values using fieldMap
         data.values.forEach(value => {
             if (fieldMap[value.fieldId]) {
-                extractedValues[fieldMap[value.fieldId]] = value.value;
+                extractedValues[fieldMap[value.fieldId]] = value.value || '';
             }
         });
 
+        // Construct the row string by mapping headers to values
         return headers.map(header => extractedValues[header] || '').join(',');
     });
 
-    const csv = [headers.join(','), ...rows].join('\n');
-
-    return csv;
-}
+    // Combine headers and rows into a single CSV string
+    return [headers.join(','), ...rows].join('\n');
+};
