@@ -4,7 +4,7 @@ import settings from '../settings.js';
 export const downloadFile=async(req,res)=>{
     
     try {
-        res.download(path.join(settings.PROJECT_DIR, 'files', 'test.pdf'), (err) => {
+        res.download(path.join(settings.PROJECT_DIR, 'files', 'Vista-Corner.pdf'), (err) => {
             if (err) {
                 res.status(500).send('Error downloading file.');
             }
