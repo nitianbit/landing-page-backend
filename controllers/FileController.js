@@ -6,7 +6,7 @@ export const downloadFile=async(req,res)=>{
     try {
         res.download(path.join(settings.PROJECT_DIR, 'files', 'Vista-Corner.pdf'), (err) => {
             if (err) {
-                res.status(500).send('Error downloading file.');
+                res.status(500).send('Error downloading file.',err);
             }
         });
     
