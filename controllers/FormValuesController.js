@@ -67,13 +67,19 @@ export const verifyOtpForFormValues = async (req, res) => {
 export const getProjectFormValues = async (req, res) => {
     try {
         const { projectId, formId} = req?.params;
-        const { refererId = "", page=1, rows=10 } = req.query;
+        const { refererId = "", page=1, rows=10, startDate, endDate} = req.query;
         const filters = {
             projectId,
             formId,
-            ...(refererId && { refererId: { $in: [refererId] } })
+            ...(refererId && { refererId: { $in: [refererId] } }),
+            ...(startDate && endDate && {
+                submittedAt: {
+                    $gte: new Date(startDate),  // Ensure the date is a JS Date object
+                    $lte: new Date(endDate)
+                }
+            })
         }
-        const query = FormValue?.find(filters).sort({ _id: -1 });;
+        const query = FormValue?.find(filters).sort({ _id: -1 });
 
         if (req.query.download) {
             query.populate({
