@@ -93,7 +93,8 @@ export const getProjectFormValues = async (req, res) => {
 
         if (req.query.download) {
             const fields = await Fields.find({ companyId: req.user.adminOf }).lean();
-            const csvData =  convertToCsv(response?.rows, fields);
+            const form = await Form.findOne({_id:formId}).populate("fields")
+            const csvData =  convertToCsv(response?.rows, form);
             return res.status(200).send({ data: csvData });
         }
         return res.status(200).send(response)
