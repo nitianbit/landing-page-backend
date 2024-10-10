@@ -73,9 +73,9 @@ export const getProjectFormValues = async (req, res) => {
             formId,
             ...(refererId && { refererId: { $in: [refererId] } }),
             ...(startDate && endDate && {
-                submittedAt: {
-                    $gte: new Date(startDate),  // Ensure the date is a JS Date object
-                    $lte: new Date(endDate)
+                 submittedAt: {
+                    $gte: new Date(`${startDate}T00:00:00Z`),
+                    $lte: new Date(`${endDate}T23:59:59.999Z`)
                 }
             })
         }
