@@ -50,6 +50,7 @@ export const getProjectByDomain = async (req, res) => {
         }
         res.status(200).send(project);
     } catch (error) {
+        console.log("getProjectByDomain", error)
         res.status(500).send(error);
     }
 }
