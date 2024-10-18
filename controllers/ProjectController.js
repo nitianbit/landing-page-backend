@@ -51,6 +51,7 @@ export const getProjectByDomain = async (req, res) => {
         res.status(200).send(project);
     } catch (error) {
         console.log("getProjectByDomain", error)
+        logger.error('logger called white server runing', error);
         res.status(500).send(error);
     }
 }
