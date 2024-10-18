@@ -15,6 +15,7 @@ import authRouter from './routers/authRouter.js'
 import userRouter from './routers/userRouter.js'
 import productRouter from './routers/productRouter.js'
 import fileRouter from './routers/fileRouter.js'
+import { logger } from "./utils/logger.js";
 
 
 
@@ -37,6 +38,7 @@ const port = process.env.PORT || 5200;
 try {
   await mongoose.connect(process.env.MONGO_URL);
   app.listen(port, () => {
+    logger.info("server running and logger")s
     console.log(`server running on port ${port}`);
   });
 } catch (error) {
