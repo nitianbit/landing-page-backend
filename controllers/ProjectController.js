@@ -17,6 +17,7 @@ export const createProject = async (req, res) => {
 
         res.status(201).send(project);
     } catch (error) {
+        logger.error('create project Error', error);
         res.status(400).send(error);
     }
 }
@@ -27,6 +28,7 @@ export const getAllProject = async (req, res) => {
         const projects = await Project.find({ companyId: user.adminOf, parent: null });
         res.status(200).send(projects);
     } catch (error) {
+        logger.error('get all projects error', error);
         res.status(500).send(error);
     }
 }
@@ -39,6 +41,7 @@ export const getProjectById = async (req, res) => {
         }
         res.status(200).send(project);
     } catch (error) {
+        logger.error('get project by id', error);
         res.status(500).send(error);
     }
 }
@@ -52,7 +55,7 @@ export const getProjectByDomain = async (req, res) => {
         res.status(200).send(project);
     } catch (error) {
         console.log("getProjectByDomain", error)
-        logger.error('logger called white server runing', error);
+        logger.error('getProjectByDomain', error);
         res.status(500).send(error);
     }
 }
@@ -72,6 +75,7 @@ export const updateProject = async (req, res) => {
         }
         res.status(200).send(project);
     } catch (error) {
+        logger.error('updateProject', error);
         res.status(400).send(error);
     }
 }
@@ -84,6 +88,7 @@ export const deleteProjectById = async (req, res) => {
         }
         res.status(200).send(project);
     } catch (error) {
+        logger.error('deleteProjectById', error);
         res.status(500).send(error);
     }
 }
