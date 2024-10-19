@@ -4,6 +4,7 @@ import FormValue from '../models/FormValueModal.js'
 import Form from '../models/FormModal.js'
 import Fields from '../models/FieldModal.js'
 import { convertToCsv, pagination, sendOtp, verifyOtp } from '../utils/helper.js';
+import { logger } from '../utils/logger.js';
 
 // Create form values
 export const createFormValues = async (req, res) => {
@@ -30,6 +31,7 @@ export const createFormValues = async (req, res) => {
         }
         res.json({ success: true, formValueId: formValue._id });
     } catch (error) {
+        logger.error('createFormValues', error);
         res.status(400).json({ success: false, error: error.message });
     }
 };
@@ -40,6 +42,7 @@ export const sendOTP = async (req, res)=>{
         const response = await sendOtp(phone);
         return res.status(200).json({ success: true,data:response});
     } catch (error) {
+        logger.error('sendOTP', error);
         res.status(400).json({ success: false, error: error.message });
     }
 }
@@ -60,6 +63,7 @@ export const verifyOtpForFormValues = async (req, res) => {
         // Continue with your logic here after OTP verification (e.g., update form values, etc.)
         res.json({ success: true });
     } catch (error) {
+        logger.error('verifyOtpForFormValues', error);
         res.status(400).json({ success: false, error: error.message });
     }
 };
@@ -106,6 +110,7 @@ export const getProjectFormValues = async (req, res) => {
         return res.status(200).send(response)
     } catch (error) {
         console.log(error);
+        logger.error('getProjectFormValues', error);
         res.status(400).json({ success: false, error: error.message });
     }
 }
@@ -116,6 +121,7 @@ export const getAllFormValue = async (req, res) => {
         const formValues = await FormValue.find().populate('formId').populate('values.fieldId');
         res.json(formValues);
     } catch (error) {
+        logger.error('getAllFormValue', error);
         res.status(500).json({ error: error.message });
     }
 }
@@ -130,6 +136,7 @@ export const updateFormValue = async (req, res) => {
         await FormValue.findByIdAndUpdate(req.params.formValueId, { values });
         res.json({ success: true });
     } catch (error) {
+        logger.error('updateFormValue', error);
         res.status(400).json({ success: false, error: error.message });
     }
 }
@@ -144,6 +151,7 @@ export const getFormValueId = async (req, res) => {
         }
         res.json(formValue);
     } catch (error) {
+        logger.error('getFormValueId', error);
         res.status(500).json({ error: error.message });
     }
 }
@@ -154,7 +162,7 @@ export const deleteFormValue = async (req, res) => {
         await FormValue.findByIdAndDelete(req.params.formValueId);
         res.json({ success: true });
     } catch (error) {
+        logger.error('deleteFormValue', error);
         res.status(500).json({ error: error.message });
     }
 }
-
