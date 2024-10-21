@@ -49,9 +49,11 @@ export const getProjectById = async (req, res) => {
 export const getProjectByDomain = async (req, res) => {
     try {
         const project = await Project.findOne({ domain: req.query?.domain });
+        logger.info('getProjectByDomain find project',);
         if (!project) {
             return res.status(404).send();
         }
+        logger.info('getProjectByDomain return project',);
         res.status(200).send(project);
     } catch (error) {
         console.log("getProjectByDomain", error)
