@@ -15,7 +15,7 @@ import {
 } from "../controllers/FormValuesController.js";
 import { isValidAdmin, verifyToken } from "../middleware/authMiddleware.js";
 
-router.get("/getFormValues/:projectId/:formId", verifyToken, isValidAdmin, getProjectFormValues);
+router.get("/getFormValues", verifyToken, isValidAdmin, getProjectFormValues);
 router.post("/addFormValue", fetchIPAddress, createFormValues);
 router.post("/verifyOtp", verifyOtpForFormValues);
 router.post("/sendOTP", sendOTP);

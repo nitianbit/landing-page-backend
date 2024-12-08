@@ -70,8 +70,8 @@ export const verifyOtpForFormValues = async (req, res) => {
 
 export const getProjectFormValues = async (req, res) => {
     try {
-        const { projectId, formId} = req?.params;
-        const { refererId = "", page=1, rows=10, startDate, endDate} = req.query;
+        // const { } = req?.params;
+        const {projectId, formId, refererId = "", page=1, rows=10, startDate, endDate} = req.query;
         const filters = {
             projectId,
             formId,
