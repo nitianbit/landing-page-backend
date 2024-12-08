@@ -20,6 +20,7 @@ export const getFields = async (req, res) => {
         const fields = await Fields.find({ companyId: req.user.adminOf });
         res.status(200).send(fields);
     } catch (error) {
+        console.log(error)
         res.status(500).send(error);
     }
 }

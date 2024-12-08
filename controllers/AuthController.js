@@ -51,7 +51,7 @@ export const login = async (req, res) => {
         }
         const isPasswordValid = await comparePassword(password, user.password)
         if (!isPasswordValid) {
-            return sendResponse(res, 401, "Invalid credentials");
+            return sendResponse(res, 400, "Invalid credentials");
         }
         const token = createToken(user)
         return sendResponse(res, 200, "Login successful", { token, user });
