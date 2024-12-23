@@ -1,4 +1,5 @@
 import Fields from '../models/FieldModal.js'
+import { pagination, sendResponse } from '../utils/helper.js';
 
 
 export const addFields = async (req, res) => {
@@ -8,33 +9,36 @@ export const addFields = async (req, res) => {
 
     try {
         await field.save();
-        res.status(201).send(field);
+        return sendResponse(res, 200, "Field Created Successfully", field)
     } catch (error) {
-        res.status(400).send(error);
+        return sendResponse(res, 500, error)
     }
 };
 
 export const getFields = async (req, res) => {
     try {
         const user = req.user;
-        const fields = await Fields.find({ companyId: req.user.adminOf });
-        res.status(200).send(fields);
+        const filters = { companyId: req.user.adminOf };
+        const {page=1, rows=10} = req.query;
+        const fields =  Fields.find(filters);
+        const response = await pagination(Fields, fields, Number(page), Number(rows), filters)
+        return sendResponse(res, 200, "", response)
     } catch (error) {
         console.log(error)
-        res.status(500).send(error);
+        return sendResponse(res, 500, error)
     }
 }
 
 export const getFieldById = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.query;
     try {
         const field = await Fields.findById(id);
         if (!field) {
             return res.status(404).send({ message: 'Field not found' });
         }
-        res.status(200).send(field);
+        return sendResponse(res, 200, "", field)
     } catch (error) {
-        res.status(500).send(error);
+        return sendResponse(res, 500, error)
     }
 };
 
@@ -46,11 +50,11 @@ export const editField = async (req, res) => {
     try {
         const field = await Fields.findByIdAndUpdate(id, { label,name, type, options: options || [] }, { new: true });
         if (!field) {
-            return res.status(404).send({ message: 'Field not found' });
+            return sendResponse(res, 404, "Field not found")
         }
-        res.status(200).send(field);
+        return sendResponse(res, 200, "Form Updated Successfully", field)
     } catch (error) {
-        res.status(400).send(error);
+        return sendResponse(res, 500, error)
     }
 };
 
@@ -60,10 +64,10 @@ export const deleteField = async (req, res) => {
     try {
         const field = await Fields.findByIdAndDelete(id);
         if (!field) {
-            return res.status(404).send({ message: 'Field not found' });
+            return sendResponse(res, 404, "Field not found")
         }
-        res.status(200).send({ message: 'Field deleted successfully' });
+        return sendResponse(res, 200, "Form Deleted Successfully")
     } catch (error) {
-        res.status(500).send(error);
+        return sendResponse(res, 500, error)
     }
 };
