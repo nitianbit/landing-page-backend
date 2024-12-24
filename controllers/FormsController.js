@@ -1,5 +1,6 @@
 import Forms from '../models/FormModal.js'
 import mongoose from 'mongoose';
+import { pagination, sendResponse } from '../utils/helper.js';
 export const addFOrmHelper = async ({ title,type, fields, project = "", requiredFields = [], showOTP = false }) => {
     try {
         const formattedFields = fields.map(fieldId => new mongoose.Types.ObjectId(fieldId));
@@ -26,74 +27,48 @@ export const addForm = async (req, res) => {
 
     try {
         const form = await addFOrmHelper({ title, fields,type, project, formIndex, requiredFields, showOTP })
-        res.status(201).send(form);
+        return sendResponse(res, 200, "Form Create Successfully", form)
     } catch (error) {
-        res.status(400).send(error);
+        return sendResponse(res, 500, error)
     }
 };
+
+
+export const getAllForms = async (req, res) => {
+    try {
+        const forms =  Forms.find().populate('fields');
+        const {page=1, rows=10} = req.body;
+        const response = await pagination(Forms, forms, Number(page), Number(rows))
+        return sendResponse(res, 200, "", response)
+    } catch (error) {
+        return sendResponse(res, 500, error)
+    }
+}
+
 
 export const getForm = async (req, res) => {
+    const { id, projectId, type } = req.query;
+    const filter = {
+        ...(id && { _id: id }),
+        ...(projectId && { project: projectId }),
+        ...(type&&{type:{$in:type.includes("in")?type.substring(3,type.length-1).split(","):[type]}}),
+    };
     try {
-        const forms = await Forms.find().populate('fields');
-        res.status(200).send(forms);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-}
-
-
-export const getFormProject = async (req, res) => {
-    try {
-        const {type} = req.query;
-        const filter = {
-            ...(type&&{type:{$in:type.includes("in")?type.substring(3,type.length-1).split(","):[type]}}),
-            project:req.params.projectId 
-        }
-        const forms = await Forms.find(filter).populate('fields');
-        res.status(200).send(forms);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-}
-
-export const getFormById = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const form = await Forms.findById(id).populate('fields');
+        const form = await Forms.find(filter).populate("fields");
         if (!form) {
-            return res.status(404).send({ message: 'Form not found' });
+             return sendResponse(res, 404, "Form not found")
         }
-        res.status(200).send(form);
+         return sendResponse(res, 200, "", form)
     } catch (error) {
-        res.status(500).send(error);
+         return sendResponse(res, 500, error)
     }
 };
-
-export const getAForm = async(req, res)=>{
-    try {
-        const {id, type, projectId} = req.query;
-        const filter = {
-            ...(id&&{_id:id}),
-            ...(type&&{type}),
-            project:projectId
-        }
-        const form = await Forms.findOne(filter).populate("fields");
-        if (!form) {
-            return res.status(404).send({ message: 'Form not found' });
-        }
-        res.status(200).send(form);
-        
-    } catch (error) {
-        res.status(500).send(error);
-    }
-}
-
 export const editForm = async (req, res) => {
     const { id } = req.params;
     const { title, fields, showOTP = false, requiredFields = [], utmParameters } = req.body;
 
     // Map fields to an array of ObjectIds
-    const formattedFields = fields?.map(field => new mongoose.Types.ObjectId(field));
+    const formattedFields = fields?.map(field => new mongoose.Types.ObjectId(field?._id));
 
     try {
         const form = await Forms.findByIdAndUpdate(
@@ -103,26 +78,25 @@ export const editForm = async (req, res) => {
         ).populate('fields');
 
         if (!form) {
-            return res.status(404).send({ message: 'Form not found' });
+            return sendResponse(res, 404, "Form not found")
         }
-
-        res.status(200).send(form);
+        return sendResponse(res, 200, "Form Updated Successfully", form)
     } catch (error) {
-        res.status(400).send(error);
+        return sendResponse(res, 500, error)
     }
 };
 export const deleteForm = async (req, res) => {
     const { id } = req.params;
     if(!id){
-        return res.status(404).send({ message: 'Form not found' });
+        return sendResponse(res, 404, "Form id not found")
     }
     try {
         const form = await Forms.findByIdAndDelete(id);
         if (!form) {
-            return res.status(404).send({ message: 'Form not found' });
+            return sendResponse(res, 404, "Form not found", form)
         }
-        res.status(200).send(form);
+        return sendResponse(res, 200, "Form Deleted Successfully", form)
     } catch (error) {
-        res.status(400).send(error);
+        return sendResponse(res, 500, error)
     }
 };
